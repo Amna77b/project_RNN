@@ -3,6 +3,7 @@
 
 #include<math.h>
 #include<stdio.h>
+#include<stdlib.h>
 #include<lib.h>
 /*la fonction de la calcule de la perte */
 float calcule_perte(float y_true,float y_pred)
@@ -15,7 +16,7 @@ float calcule_perte(float y_true,float y_pred)
   }
 }
 
-/*calcule du perte à l'aide de la fonction sigmoid*/
+/*calcule du perte Ã  l'aide de la fonction sigmoid*/
 float calcule_loss_sig(float *y_true, float *y_pred, int nb_input){
 
  double loss = 0;
