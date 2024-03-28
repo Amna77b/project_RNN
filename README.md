@@ -11,22 +11,25 @@ can be adapted for various sequence-based tasks.
 ## Requirements
 
 - C compiler ( GCC)
-- Make 
+- Make IN PROGREEES ....
 - Libraries : -lib.h
               -optimation_tools
 
 ## Files
-
+IN PROGREEES ....
 
 ## Usage
-
-1. **Data Preprocessing**: 
-2. **Compilation**: 
-3. **Training**: 
-4. **Evaluation**: 
+IN PROGREEES ....
+1. **Data Preprocessing**: IN PROGREEES ....
+2. **Compilation**: IN PROGREEES ....
+3. **Training**: IN PROGREEES ....
+4. **Evaluation**: IN PROGREEES ....
 
 ## Example Usage
-
-##Dataset 
-##References
-##License
+IN PROGREEES ....
+## Dataset 
+IN PROGREEES ....
+## References
+IN PROGREEES ....
+## License
+IN PROGREEES ....
