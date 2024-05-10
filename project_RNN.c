@@ -1,82 +1,99 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <lib.h>
+#include <time.h>
 
-/*Structure pour une couche de neurones*/
+// D√©finition de la structure Neurone
 typedef struct {
+    int num_entrees;     // Nombre d'entr√©es pour ce neurone
+    double *poids;       // Poids associ√©s √† chaque entr√©e
+    double *entrees;     // Valeurs des entr√©es
+    double sortie;       // Sortie du neurone apr√®s activation
+} Neurone;
 
-    float *inputs;      // EntrÈes de la couche
-    float *weights;     // Poids des connexions
-    float *biases;      // Biais des neurones
-    float *outputs;     // Sorties de la couche
-} neurone;
+// D√©finition de la structure Couche
 typedef struct {
- int num_neurons;    // Nombre de neurones dans la couche
- neuron *noeud;
+    int num_neurones;    // Nombre de neurones dans la couche
+    Neurone **neurones;  // Tableau de pointeurs vers les neurones de cette couche
+} Couche;
 
-}Layer;
+// Fonction pour initialiser un r√©seau avec les sp√©cifications donn√©es
+Couche *initialiser_reseau(int num_couches, int *num_neurones, int *num_entrees) {
+    Couche *reseau = (Couche *)malloc(num_couches * sizeof(Couche));
 
-/* Initialiser une couche de neurones avec des poids et des biais alÈatoires*/
-void initialize_layer(Layer *layer, int num_inputs, int num_neurons) {
-    layer->num_neurons = num_neurons;
-
-    /* Allouer de la mÈmoire pour les entrÈes, les poids, les biais et les sorties*/
-    layer->noeud->inputs = (float*)malloc(num_inputs * sizeof(float));
-    layer->noeud->weights = (float*)malloc(num_inputs * num_neurons * sizeof(float));
-    layer->noeud->biases = (float*)malloc(num_neurons * sizeof(float));
-    layer->noeud->outputs = (float*)malloc(num_neurons * sizeof(float));
-
-/*Initialiser les poids et les biais alÈatoirement*/
-    for (int i = 0; i < num_inputs * num_neurons; i++) {
-        layer->noeud->weights[i] = ((float)rand() / RAND_MAX) - 0.5; // Valeurs entre -0.5 et 0.5
-    }
-    for (int i = 0; i < num_neurons; i++) {
-        layer->noeud->biases[i] = ((float)rand() / RAND_MAX) - 0.5; // Valeurs entre -0.5 et 0.5
-    }
-}
-
-// Propagation avant ‡ travers une couche de neurones avec fonction d'activation ReLU
-void parcourir(Layer *prev_layer, Layer *current_layer) {
-    for (int j = 0; j < current_layer->num_neurons; j++) {
-        float weighted_sum = 0;
-        for (int i = 0; i < prev_layer->num_neurons; i++) {
-            weighted_sum += prev_layer->noeud->outputs[i] * current_layer->noeud->weights[i * current_layer->num_neurons + j];
+    for (int i = 0; i < num_couches; i++) {
+        reseau[i].num_neurones = num_neurones[i];
+        reseau[i].neurones = (Neurone **)malloc(num_neurones[i] * sizeof(Neurone *));
+        
+        for (int j = 0; j < num_neurones[i]; j++) {
+            Neurone *neurone = (Neurone *)malloc(sizeof(Neurone));
+            neurone->num_entrees = num_entrees[i];
+            neurone->poids = (double *)malloc(num_entrees[i] * sizeof(double));
+            neurone->entrees = (double *)malloc(num_entrees[i] * sizeof(double));
+            neurone->sortie = 0.0;
+            reseau[i].neurones[j] = neurone;
         }
-        weighted_sum += current_layer->noeud->biases[j];
-        current_layer->noeud->outputs[j] = relu(weighted_sum);
+    }
+
+    return reseau;
+}
+
+// Fonction pour saisir les valeurs des entr√©es pour la premi√®re couche
+void saisie_valeurs_premiere_couche(Couche *premiere_couche) {
+    printf("Saisie des valeurs pour la premi√®re couche :\n");
+
+    for (int i = 0; i < premiere_couche->num_neurones; i++) {
+        printf("Valeurs d'entr√©e pour le neurone %d :\n", i + 1);
+        
+        for (int j = 0; j < premiere_couche->neurones[i]->num_entrees; j++) {
+            printf("Entr√©e %d : ", j + 1);
+            scanf("%lf", &(premiere_couche->neurones[i]->entrees[j]));
+        }
     }
 }
 
+// Fonction principale
 int main() {
-    srand(1234); /*Initialiser le gÈnÈra-teur de nombres alÈatoires*/
-    // CrÈer une couche cachÈe avec 3 neurones
-    Layer hidden;
-    initialize_layer(&hidden, 3, 3);
+    srand(time(NULL)); // Initialisation du g√©n√©rateur de nombres al√©atoires
 
-    // CrÈer une couche de sortie avec 1 neurone
-    Layer output;
-    initialize_layer(&output, hidden.num_neurons, 1);
+    int num_couches;
+    printf("Nombre de couches : ");
+    scanf("%d", &num_couches);
 
-    // parcourir le rÈseau de neurone
-    parcourir(&hidden, &output);
+    int *num_neurones = (int *)malloc(num_couches * sizeof(int));
+    int *num_entrees = (int *)malloc(num_couches * sizeof(int));
 
-    // Afficher les sorties de la couche de sortie
-    printf("Sorties de la couche de sortie :\n");
-    for (int i = 0; i < output.num_neurons; i++) {
-        printf("%f ", output.outputs[i]);
+    for (int i = 0; i < num_couches; i++) {
+        printf("Nombre de neurones dans la couche %d : ", i + 1);
+        scanf("%d", &num_neurones[i]);
+
+        printf("Nombre d'entr√©es par neurone dans la couche %d : ", i + 1);
+        scanf("%d", &num_entrees[i]);
     }
-    printf("\n");
 
-    // LibÈrer la mÈmoire allouÈe
-    free(hidden.noeud.inputs);
-    free(hidden.noeud.weights);
-    free(hidden.noeud.biases);
-    free(hidden.noeud.outputs);
-    free(output.noeud.inputs);
-    free(output.noeud.weights);
-    free(output.noeud.biases);
-    free(output.noeud.outputs);
+    // Initialisation du r√©seau neuronal
+    Couche *reseau = initialiser_reseau(num_couches, num_neurones, num_entrees);
 
-return 0;
+    // Saisie des valeurs pour la premi√®re couche
+    saisie_valeurs_premiere_couche(&reseau[0]);
+
+    // Afficher les sorties de la premi√®re couche
+    printf("\nSortie de la premiere couche :\n");
+    for (int i = 0; i < reseau[0].num_neurones; i++) {
+        printf("Sortie du neurone %d : %.2f\n", i + 1, reseau[0].neurones[i]->sortie);
+    }
+
+    // Lib√©ration de la m√©moire allou√©e
+    for (int i = 0; i < num_couches; i++) {
+        for (int j = 0; j < num_neurones[i]; j++) {
+            free(reseau[i].neurones[j]->poids);
+            free(reseau[i].neurones[j]->entrees);
+            free(reseau[i].neurones[j]);
+        }
+        free(reseau[i].neurones);
+    }
+    free(reseau);
+    free(num_neurones);
+    free(num_entrees);
+
+    return 0;
 }
